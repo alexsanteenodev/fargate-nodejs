@@ -6,6 +6,7 @@ import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as path from 'path';
+import * as cdk from 'aws-cdk-lib';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { FargateNodejsServiceProps } from './types';
 import { Bundler } from './bundling';
@@ -265,6 +266,25 @@ export class FargateNodejsService extends Construct {
         targetUtilizationPercent: autoScalingConfig.targetMemoryUtilization,
         scaleInCooldown: autoScalingConfig.scaleInCooldown || Duration.seconds(300),
         scaleOutCooldown: autoScalingConfig.scaleOutCooldown || Duration.seconds(60),
+      });
+    }
+
+    // SQS queue-based scaling
+    if (autoScalingConfig.sqsQueue) {
+      const messagesPerTask = autoScalingConfig.messagesPerTask || 5;
+      
+      scaling.scaleOnMetric('SqsQueueScaling', {
+        metric: autoScalingConfig.sqsQueue.metricApproximateNumberOfMessagesVisible({
+          statistic: 'Average',
+          period: Duration.minutes(1),
+        }),
+        scalingSteps: [
+          { upper: 0, change: -1 },
+          { lower: messagesPerTask, change: +1 },
+          { lower: messagesPerTask * 2, change: +2 },
+          { lower: messagesPerTask * 4, change: +3 },
+        ],
+        adjustmentType: cdk.aws_applicationautoscaling.AdjustmentType.CHANGE_IN_CAPACITY,
       });
     }
   }

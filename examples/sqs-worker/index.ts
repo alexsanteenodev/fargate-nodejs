@@ -30,7 +30,8 @@ class SqsWorkerExampleStack extends cdk.Stack {
       autoScaling: {
         minCapacity: 1,
         maxCapacity: 10,
-        targetCpuUtilization: 70,
+        sqsQueue: queue,
+        messagesPerTask: 10, // Scale up when queue has 10+ messages per task
       },
       
       // Run in private subnet (no public IP needed)

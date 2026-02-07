@@ -5,7 +5,7 @@ This example demonstrates how to use `FargateNodejsService` to create an SQS wor
 ## Key Features
 
 - **No port mapping** - Background worker doesn't need to listen on any port
-- **Auto-scaling** - Scales based on CPU utilization (can also scale based on queue depth)
+- **Queue-based auto-scaling** - Automatically scales based on SQS queue depth
 - **Long polling** - Efficient message retrieval with 20-second wait time
 - **Error handling** - Failed messages become visible again after visibility timeout
 - **Private subnet** - No public IP needed, runs in private subnet with NAT gateway
@@ -16,6 +16,11 @@ This example demonstrates how to use `FargateNodejsService` to create an SQS wor
 2. Processes each message
 3. Deletes successfully processed messages
 4. Failed messages automatically become visible again
+5. **Auto-scales based on queue depth**: With `messagesPerTask: 10`, it scales:
+   - 0 messages → scale in by 1
+   - 10+ messages → scale out by 1
+   - 20+ messages → scale out by 2
+   - 40+ messages → scale out by 3
 
 ## Deploy
 

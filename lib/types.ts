@@ -4,6 +4,7 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { Duration } from 'aws-cdk-lib';
 
 /**
@@ -183,6 +184,18 @@ export interface AutoScalingConfig {
    * @default Duration.seconds(60)
    */
   readonly scaleOutCooldown?: Duration;
+
+  /**
+   * SQS queue to use for scaling (scales based on queue depth)
+   * When specified, scales based on ApproximateNumberOfMessagesVisible metric
+   */
+  readonly sqsQueue?: sqs.IQueue;
+
+  /**
+   * Target number of messages per task for SQS-based scaling
+   * @default 5
+   */
+  readonly messagesPerTask?: number;
 }
 
 /**
