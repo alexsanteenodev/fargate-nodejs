@@ -9,24 +9,17 @@ class SqsWorkerExampleStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Create SQS queue
     const queue = new sqs.Queue(this, 'WorkQueue', {
       queueName: 'fargate-worker-queue',
       visibilityTimeout: cdk.Duration.seconds(30),
       retentionPeriod: cdk.Duration.days(4),
     });
 
-    // Create Fargate service that processes SQS messages
-    // Note: No containerPort specified - this is a background worker
     const worker = new FargateNodejsService(this, 'SqsWorker', {
       entry: './app/index.ts',
       runtime: '18',
       cpu: 256,
       memoryLimitMiB: 512,
-      
-      // No containerPort needed for SQS worker
-      // containerPort: undefined,
-      
       // Environment variables
       environment: {
         QUEUE_URL: queue.queueUrl,
