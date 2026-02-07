@@ -137,4 +137,4 @@ npm test
 
 ## License
 
-MIT
+[MIT](https://github.com/alexsanteenodev/fargate-nodejs/blob/main/LICENSE)
