@@ -41,3 +41,7 @@ node_modules/
 *.swo
 .env
 .env.*
+
+# CDK asset staging
+.cdk.staging
+cdk.out
