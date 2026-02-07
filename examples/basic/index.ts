@@ -12,20 +12,20 @@ export class BasicExampleStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    // Create a simple Fargate service running Node.js
+    
+    const containerPort = 8080;
 
-    // Create a simple Fargate service running Node.js
     const fn = new FargateNodejsService(this, 'MyService', {
       entry: './app/index.ts', // Path to your TypeScript/JavaScript entry file
       runtime: '18', // Node.js 18
       cpu: 256, // .25 vCPU
       memoryLimitMiB: 512, // 512 MB
-      containerPort: 3000,
+      containerPort,
       desiredCount: 1,
       assignPublicIp: true, // For demo purposes; use false with NAT Gateway in production
       environment: {
         NODE_ENV: 'production',
-        PORT: '3000',
+        PORT: containerPort.toString(),
       },
       bundling: {
         minify: true,
