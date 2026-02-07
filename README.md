@@ -114,7 +114,7 @@ Key properties:
 - `loadBalancer` - ALB integration
 - `environment` / `secrets` - Container config
 
-See [types.ts](lib/types.ts) for full API.
+See [types.ts](https://github.com/alexsanteenodev/fargate-nodejs/blob/main/lib/types.ts) for full API.
 
 ## Why use this?
 
@@ -124,10 +124,8 @@ See [types.ts](lib/types.ts) for full API.
 
 ## Examples
 
-Complete examples in [examples/](examples/):
-
-- [Basic HTTP Service](examples/basic/) - Express app
-- [SQS Worker](examples/sqs-worker/) - Background worker with queue scaling
+- [Basic HTTP Service](https://github.com/alexsanteenodev/fargate-nodejs/tree/main/examples/basic) - Express app
+- [SQS Worker](https://github.com/alexsanteenodev/fargate-nodejs/tree/main/examples/sqs-worker) - Background worker with queue scaling
 
 ## Development
 
