@@ -74,11 +74,11 @@ Resources:
 
 ## Features Demonstrated
 
-- Basic Fargate service creation
-- TypeScript bundling
+- HTTP service with port mapping (`containerPort: 3000`)
+- Automatic TypeScript bundling with esbuild
 - Environment variables
-- Express HTTP server
-- Health check endpoint
+- Express server with health check
+- Public IP assignment for testing
 
 ## Testing
 
