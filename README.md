@@ -1,5 +1,9 @@
 # Fargate-nodejs
 
+[![npm version](https://img.shields.io/npm/v/fargate-nodejs.svg)](https://www.npmjs.com/package/fargate-nodejs)
+[![GitHub](https://img.shields.io/badge/GitHub-alexsanteenodev%2Ffargate--nodejs-blue?logo=github)](https://github.com/alexsanteenodev/fargate-nodejs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Deploy Node.js/TypeScript to AWS Fargate with automatic esbuild bundling, similar to [Lambda's `NodejsFunction`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda_nodejs.NodejsFunction.html).
 
 ## Features
