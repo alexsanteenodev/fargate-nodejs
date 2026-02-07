@@ -56,6 +56,7 @@ npm run destroy
 ## Differences from HTTP Service
 
 Unlike the basic Express example:
+
 - ❌ No `containerPort` specified
 - ❌ No load balancer
 - ❌ No port mappings

@@ -39,10 +39,12 @@ async function pollMessages() {
 
               // Delete message after successful processing
               if (message.ReceiptHandle) {
-                await sqs.send(new DeleteMessageCommand({
-                  QueueUrl: queueUrl,
-                  ReceiptHandle: message.ReceiptHandle,
-                }));
+                await sqs.send(
+                  new DeleteMessageCommand({
+                    QueueUrl: queueUrl,
+                    ReceiptHandle: message.ReceiptHandle,
+                  })
+                );
                 console.log('Message deleted successfully');
               }
             }
@@ -57,13 +59,13 @@ async function pollMessages() {
     } catch (error) {
       console.error('Error polling SQS:', error);
       // Wait a bit before retrying on error
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 }
 
 // Start the worker
-pollMessages().catch(error => {
+pollMessages().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

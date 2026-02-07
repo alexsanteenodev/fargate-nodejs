@@ -83,7 +83,7 @@ export class FargateNodejsService extends Construct {
     // Get or create VPC
     this.vpc =
       props.vpc ||
-      new ec2.Vpc(this, 'Vpc', {
+      new ec2.Vpc(this, 'FargateVpc', {
         maxAzs: 2,
         natGateways: props.assignPublicIp ? 0 : 1,
       });
@@ -91,12 +91,12 @@ export class FargateNodejsService extends Construct {
     // Get or create cluster
     this.cluster =
       props.cluster ||
-      new ecs.Cluster(this, 'Cluster', {
+      new ecs.Cluster(this, 'FargateCluster', {
         vpc: this.vpc,
       });
 
     // Create task definition
-    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
+    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'FargateTaskDef', {
       cpu: props.cpu || 256,
       memoryLimitMiB: props.memoryLimitMiB || 512,
       executionRole: props.executionRole,
@@ -110,7 +110,7 @@ export class FargateNodejsService extends Construct {
     // Create log group
     const logGroup =
       props.logGroup ||
-      new logs.LogGroup(this, 'LogGroup', {
+      new logs.LogGroup(this, 'FargateLogGroup', {
         retention: props.logRetention || logs.RetentionDays.ONE_WEEK,
         removalPolicy: RemovalPolicy.DESTROY,
       });
@@ -130,7 +130,7 @@ export class FargateNodejsService extends Construct {
     });
 
     // Create container definition
-    this.container = this.taskDefinition.addContainer('app', {
+    this.container = this.taskDefinition.addContainer('FargateContainer', {
       image,
       logging: ecs.LogDriver.awsLogs({
         logGroup,
@@ -155,7 +155,7 @@ export class FargateNodejsService extends Construct {
 
     // Create security group
     const securityGroups = props.securityGroups || [
-      new ec2.SecurityGroup(this, 'SecurityGroup', {
+      new ec2.SecurityGroup(this, 'FargateSecurityGroup', {
         vpc: this.vpc,
         description: `Security group for ${id}`,
         allowAllOutbound: true,
@@ -173,7 +173,7 @@ export class FargateNodejsService extends Construct {
     }
 
     // Create Fargate service
-    this.service = new ecs.FargateService(this, 'Service', {
+    this.service = new ecs.FargateService(this, 'FargateService', {
       cluster: this.cluster,
       taskDefinition: this.taskDefinition,
       desiredCount: props.desiredCount || 1,
@@ -215,13 +215,13 @@ export class FargateNodejsService extends Construct {
     // Get or create listener
     const listener =
       lbConfig.listener ||
-      lbConfig.loadBalancer.addListener('Listener', {
+      lbConfig.loadBalancer.addListener('HttpListener', {
         port: 80,
         protocol: elbv2.ApplicationProtocol.HTTP,
       });
 
     // Create target group
-    this.targetGroup = new elbv2.ApplicationTargetGroup(this, 'TargetGroup', {
+    this.targetGroup = new elbv2.ApplicationTargetGroup(this, 'FargateTargetGroup', {
       vpc: this.vpc,
       port: containerPort,
       protocol: elbv2.ApplicationProtocol.HTTP,
@@ -237,8 +237,9 @@ export class FargateNodejsService extends Construct {
     this.service.attachToApplicationTargetGroup(this.targetGroup);
 
     // Add listener rule
-    const ruleProps: elbv2.ApplicationListenerRuleProps = {
+    new elbv2.ApplicationListenerRule(this, 'FargateListenerRule', {
       listener,
+      priority: lbConfig.priority ?? 1,
       conditions: [
         ...(lbConfig.pathPatterns
           ? [elbv2.ListenerCondition.pathPatterns(lbConfig.pathPatterns)]
@@ -248,11 +249,7 @@ export class FargateNodejsService extends Construct {
           : []),
       ],
       targetGroups: [this.targetGroup],
-    };
-    if (lbConfig.priority !== undefined) {
-      ruleProps.priority = lbConfig.priority;
-    }
-    new elbv2.ApplicationListenerRule(this, 'ListenerRule', ruleProps);
+    });
   }
 
   /**
@@ -270,7 +267,7 @@ export class FargateNodejsService extends Construct {
 
     // CPU-based scaling
     if (autoScalingConfig.targetCpuUtilization) {
-      scaling.scaleOnCpuUtilization('CpuScaling', {
+      scaling.scaleOnCpuUtilization('FargateCpuScaling', {
         targetUtilizationPercent: autoScalingConfig.targetCpuUtilization,
         scaleInCooldown: autoScalingConfig.scaleInCooldown || Duration.seconds(300),
         scaleOutCooldown: autoScalingConfig.scaleOutCooldown || Duration.seconds(60),
@@ -279,7 +276,7 @@ export class FargateNodejsService extends Construct {
 
     // Memory-based scaling
     if (autoScalingConfig.targetMemoryUtilization) {
-      scaling.scaleOnMemoryUtilization('MemoryScaling', {
+      scaling.scaleOnMemoryUtilization('FargateMemoryScaling', {
         targetUtilizationPercent: autoScalingConfig.targetMemoryUtilization,
         scaleInCooldown: autoScalingConfig.scaleInCooldown || Duration.seconds(300),
         scaleOutCooldown: autoScalingConfig.scaleOutCooldown || Duration.seconds(60),
@@ -290,7 +287,7 @@ export class FargateNodejsService extends Construct {
     if (autoScalingConfig.sqsQueue) {
       const messagesPerTask = autoScalingConfig.messagesPerTask || 5;
 
-      scaling.scaleOnMetric('SqsQueueScaling', {
+      scaling.scaleOnMetric('FargateSqsScaling', {
         metric: autoScalingConfig.sqsQueue.metricApproximateNumberOfMessagesVisible({
           statistic: 'Average',
           period: Duration.minutes(1),

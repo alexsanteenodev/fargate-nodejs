@@ -83,16 +83,16 @@ const service = new FargateNodejsService(stack, 'MyService', {
   projectRoot: './my-app',
   cpu: 512,
   memoryLimitMiB: 1024,
-  
+
   bundling: {
     minify: true,
     sourceMap: true,
     externalModules: ['aws-sdk'],
   },
-  
+
   environment: { API_KEY: 'value' },
   secrets: { DB_PASSWORD: ecs.Secret.fromSecretsManager(secret) },
-  
+
   assignPublicIp: false,
   enableExecuteCommand: true,
 });

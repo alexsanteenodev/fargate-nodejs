@@ -19,38 +19,45 @@ This example demonstrates how to use `FargateNodejsService` to deploy a simple N
 ## Setup & Deployment
 
 1. **Install dependencies:**
+
 ```bash
 npm install
 ```
 
 2. **Build the CDK app:**
+
 ```bash
 npm run build
 ```
 
 3. **Bootstrap CDK (first time only):**
+
 ```bash
 cdk bootstrap
 ```
+
 This creates the necessary S3 bucket and other resources for CDK deployments in your AWS account.
 
 4. **View the CloudFormation template:**
+
 ```bash
 npm run synth
 ```
 
 5. **Deploy the stack:**
+
 ```bash
 npm run deploy
 ```
 
 Or use CDK directly:
+
 ```bash
 cdk deploy
 ```
 
 6. **View the outputs:**
-After deployment, you'll see outputs including:
+   After deployment, you'll see outputs including:
    - Service ARN
    - Cluster Name
    - VPC ID
@@ -58,6 +65,7 @@ After deployment, you'll see outputs including:
 ## What Gets Created
 
 The deployment creates:
+
 - ECS Fargate Cluster
 - VPC with public/private subnets
 - Fargate Task Definition with Node.js 18
@@ -67,6 +75,7 @@ The deployment creates:
 - IAM Roles (Task Role & Execution Role)
 
 Resources:
+
 - 256 CPU units (.25 vCPU)
 - 512 MB memory
 - Public IP assignment
@@ -83,6 +92,7 @@ Resources:
 ## Testing
 
 Since the service is deployed with a public IP, you can find the IP in the AWS Console:
+
 1. Go to ECS > Clusters > Your Cluster > Services > Tasks
 2. Click on the running task
 3. Find the Public IP
@@ -106,6 +116,7 @@ npm run destroy
 ```
 
 Or:
+
 ```bash
 cdk destroy
 ```
@@ -113,6 +124,7 @@ cdk destroy
 ## Cost Considerations
 
 Running this example will incur AWS charges:
+
 - Fargate: ~$0.012/hour for 0.25 vCPU and 512 MB
 - VPC NAT Gateway (if used): ~$0.045/hour
 - CloudWatch Logs: Based on ingestion and storage

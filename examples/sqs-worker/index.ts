@@ -25,7 +25,7 @@ class SqsWorkerExampleStack extends cdk.Stack {
         QUEUE_URL: queue.queueUrl,
         NODE_ENV: 'production',
       },
-      
+
       // Scale up/down based on queue depth
       autoScaling: {
         minCapacity: 1,
@@ -33,7 +33,7 @@ class SqsWorkerExampleStack extends cdk.Stack {
         sqsQueue: queue,
         messagesPerTask: 10, // Scale up when queue has 10+ messages per task
       },
-      
+
       // Run in private subnet (no public IP needed)
       assignPublicIp: false,
     });

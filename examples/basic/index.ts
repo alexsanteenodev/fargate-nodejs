@@ -12,7 +12,6 @@ export class BasicExampleStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    
     const containerPort = 8080;
 
     const fn = new FargateNodejsService(this, 'MyService', {
