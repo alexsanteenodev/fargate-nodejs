@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.vscode
+.idea
+cdk.out
+.cdk.staging
+*.log
