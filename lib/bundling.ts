@@ -1,7 +1,8 @@
-import * as esbuild from 'esbuild';
-import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
+import * as path from 'path';
+
+import * as esbuild from 'esbuild';
 
 /**
  * Options for the Bundler
@@ -14,7 +15,7 @@ export interface BundlerOptions {
 
   /**
    * Project root directory
-   */ 
+   */
   projectRoot: string;
 
   /**

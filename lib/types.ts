@@ -1,11 +1,11 @@
-import { BuildOptions } from 'esbuild';
+import { Duration } from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
-import { Duration } from 'aws-cdk-lib';
+import { BuildOptions } from 'esbuild';
 
 /**
  * Command hooks for the bundling process
@@ -332,7 +332,7 @@ export interface FargateNodejsServiceProps {
   readonly healthCheck?: HealthCheckConfig;
 
   /**
-   * The minimum healthy percentage for the service   
+   * The minimum healthy percentage for the service
    * @default 100
    */
   readonly minHealthyPercent?: number;

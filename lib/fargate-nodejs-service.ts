@@ -1,15 +1,17 @@
-import { Construct } from 'constructs';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as ecs from 'aws-cdk-lib/aws-ecs';
-import * as ecr_assets from 'aws-cdk-lib/aws-ecr-assets';
-import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as logs from 'aws-cdk-lib/aws-logs';
-import * as iam from 'aws-cdk-lib/aws-iam';
 import * as path from 'path';
+
 import * as cdk from 'aws-cdk-lib';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
-import { FargateNodejsServiceProps } from './types';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecr_assets from 'aws-cdk-lib/aws-ecr-assets';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+
 import { Bundler } from './bundling';
+import { FargateNodejsServiceProps } from './types';
 
 /**
  * A Fargate service that runs Node.js/TypeScript code, similar to Lambda's NodejsFunction
@@ -79,15 +81,19 @@ export class FargateNodejsService extends Construct {
     const bundleDir = bundler.bundle();
 
     // Get or create VPC
-    this.vpc = props.vpc || new ec2.Vpc(this, 'Vpc', {
-      maxAzs: 2,
-      natGateways: props.assignPublicIp ? 0 : 1,
-    });
+    this.vpc =
+      props.vpc ||
+      new ec2.Vpc(this, 'Vpc', {
+        maxAzs: 2,
+        natGateways: props.assignPublicIp ? 0 : 1,
+      });
 
     // Get or create cluster
-    this.cluster = props.cluster || new ecs.Cluster(this, 'Cluster', {
-      vpc: this.vpc,
-    });
+    this.cluster =
+      props.cluster ||
+      new ecs.Cluster(this, 'Cluster', {
+        vpc: this.vpc,
+      });
 
     // Create task definition
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
@@ -102,17 +108,20 @@ export class FargateNodejsService extends Construct {
     });
 
     // Create log group
-    const logGroup = props.logGroup || new logs.LogGroup(this, 'LogGroup', {
-      retention: props.logRetention || logs.RetentionDays.ONE_WEEK,
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
+    const logGroup =
+      props.logGroup ||
+      new logs.LogGroup(this, 'LogGroup', {
+        retention: props.logRetention || logs.RetentionDays.ONE_WEEK,
+        removalPolicy: RemovalPolicy.DESTROY,
+      });
 
     // Build Docker image with bundled code
     // Use the bundled directory as context and a simple Dockerfile
     const image = ecs.ContainerImage.fromAsset(bundleDir, {
-      platform: props.architecture === ecs.CpuArchitecture.ARM64 
-        ? ecr_assets.Platform.LINUX_ARM64
-        : ecr_assets.Platform.LINUX_AMD64,
+      platform:
+        props.architecture === ecs.CpuArchitecture.ARM64
+          ? ecr_assets.Platform.LINUX_ARM64
+          : ecr_assets.Platform.LINUX_AMD64,
       buildArgs: {
         NODE_VERSION: runtime,
         ...props.buildArgs,
@@ -172,7 +181,9 @@ export class FargateNodejsService extends Construct {
       assignPublicIp: props.assignPublicIp || false,
       securityGroups,
       vpcSubnets: props.vpcSubnets || {
-        subnetType: props.assignPublicIp ? ec2.SubnetType.PUBLIC : ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        subnetType: props.assignPublicIp
+          ? ec2.SubnetType.PUBLIC
+          : ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
       enableExecuteCommand: props.enableExecuteCommand || false,
       minHealthyPercent: props.minHealthyPercent || 100,
@@ -200,12 +211,14 @@ export class FargateNodejsService extends Construct {
     if (!props.loadBalancer) return;
 
     const lbConfig = props.loadBalancer;
-    
+
     // Get or create listener
-    const listener = lbConfig.listener || lbConfig.loadBalancer.addListener('Listener', {
-      port: 80,
-      protocol: elbv2.ApplicationProtocol.HTTP,
-    });
+    const listener =
+      lbConfig.listener ||
+      lbConfig.loadBalancer.addListener('Listener', {
+        port: 80,
+        protocol: elbv2.ApplicationProtocol.HTTP,
+      });
 
     // Create target group
     this.targetGroup = new elbv2.ApplicationTargetGroup(this, 'TargetGroup', {
@@ -224,11 +237,15 @@ export class FargateNodejsService extends Construct {
     this.service.attachToApplicationTargetGroup(this.targetGroup);
 
     // Add listener rule
-    const ruleProps: any = {
+    const ruleProps: elbv2.ApplicationListenerRuleProps = {
       listener,
       conditions: [
-        ...(lbConfig.pathPatterns ? [elbv2.ListenerCondition.pathPatterns(lbConfig.pathPatterns)] : []),
-        ...(lbConfig.hostHeaders ? [elbv2.ListenerCondition.hostHeaders(lbConfig.hostHeaders)] : []),
+        ...(lbConfig.pathPatterns
+          ? [elbv2.ListenerCondition.pathPatterns(lbConfig.pathPatterns)]
+          : []),
+        ...(lbConfig.hostHeaders
+          ? [elbv2.ListenerCondition.hostHeaders(lbConfig.hostHeaders)]
+          : []),
       ],
       targetGroups: [this.targetGroup],
     };
@@ -245,7 +262,7 @@ export class FargateNodejsService extends Construct {
     if (!props.autoScaling) return;
 
     const autoScalingConfig = props.autoScaling;
-    
+
     const scaling = this.service.autoScaleTaskCount({
       minCapacity: autoScalingConfig.minCapacity || 1,
       maxCapacity: autoScalingConfig.maxCapacity || 10,
@@ -272,7 +289,7 @@ export class FargateNodejsService extends Construct {
     // SQS queue-based scaling
     if (autoScalingConfig.sqsQueue) {
       const messagesPerTask = autoScalingConfig.messagesPerTask || 5;
-      
+
       scaling.scaleOnMetric('SqsQueueScaling', {
         metric: autoScalingConfig.sqsQueue.metricApproximateNumberOfMessagesVisible({
           statistic: 'Average',
@@ -294,7 +311,7 @@ export class FargateNodejsService extends Construct {
    */
   public grantPermissions(permissions: iam.PolicyStatement[]): void {
     const taskRole = this.taskDefinition.taskRole;
-    permissions.forEach(permission => {
+    permissions.forEach((permission) => {
       taskRole.addToPrincipalPolicy(permission);
     });
   }
