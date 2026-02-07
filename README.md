@@ -139,6 +139,63 @@ npm run build
 npm test
 ```
 
+## Contributing
+
+Contributions are welcome! Here's how you can help:
+
+New to contributing? Check out [GitHub's guide to contributing to a project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
+
+### Reporting Issues
+
+- Check if the issue already exists in [GitHub Issues](https://github.com/alexsanteenodev/fargate-nodejs/issues)
+- Provide a clear description and reproduction steps
+- Include your CDK version, Node.js version, and relevant code snippets
+
+### Submitting Pull Requests
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes and add tests
+4. Run tests: `npm test`
+5. Build the project: `npm run build`
+6. Commit with a clear message: `git commit -m "feat: add new feature"`
+7. Push to your fork: `git push origin feature/my-feature`
+8. Open a Pull Request with a description of your changes
+
+### Development Setup
+
+```bash
+# Clone your fork
+git clone https://github.com/YOUR_USERNAME/fargate-nodejs.git
+cd fargate-nodejs
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Run tests
+npm test
+
+# Test locally with examples
+cd examples/basic
+npm install
+npx cdk synth
+```
+
+### Code Style
+
+- Follow the existing code style
+- Use TypeScript for all code
+- Keep commits atomic and well-described
+
+### Testing
+
+- Add unit tests for new features
+- Ensure all tests pass before submitting
+- Test with the example projects when possible
+
 ## License
 
 [MIT](https://github.com/alexsanteenodev/fargate-nodejs/blob/main/LICENSE)
