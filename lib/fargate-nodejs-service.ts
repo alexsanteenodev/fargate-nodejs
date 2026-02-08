@@ -17,54 +17,31 @@ import { FargateNodejsServiceProps } from './types';
  * A Fargate service that runs Node.js/TypeScript code, similar to Lambda's NodejsFunction
  */
 export class FargateNodejsService extends Construct {
-  /**
-   * The Fargate service
-   */
+
   public readonly service: ecs.FargateService;
 
-  /**
-   * The task definition
-   */
   public readonly taskDefinition: ecs.FargateTaskDefinition;
 
-  /**
-   * The container definition
-   */
   public readonly container: ecs.ContainerDefinition;
 
-  /**
-   * The VPC
-   */
   public readonly vpc: ec2.IVpc;
 
-  /**
-   * The ECS cluster
-   */
   public readonly cluster: ecs.ICluster;
 
-  /**
-   * The security group
-   */
   public readonly securityGroup: ec2.ISecurityGroup;
 
-  /**
-   * The target group (if load balancer is configured)
-   */
   public targetGroup?: elbv2.ApplicationTargetGroup;
 
   constructor(scope: Construct, id: string, props: FargateNodejsServiceProps) {
     super(scope, id);
 
-    // Validate entry point
     if (!props.entry) {
       throw new Error('entry is required');
     }
 
-    // Determine paths
     const entryPath = path.resolve(props.entry);
     const projectRoot = props.projectRoot || Bundler.findProjectRoot(path.dirname(entryPath));
     const runtime = props.runtime || '18';
-    // Only set default port if loadBalancer is configured, otherwise leave undefined
     const containerPort = props.containerPort || (props.loadBalancer ? 3000 : undefined);
 
     // Bundle the code with esbuild (similar to Lambda's NodejsFunction)
@@ -77,10 +54,8 @@ export class FargateNodejsService extends Construct {
       externalModules: props.bundling?.externalModules,
     });
 
-    // Bundle outputs to a staging directory
     const bundleDir = bundler.bundle();
 
-    // Get or create VPC
     this.vpc =
       props.vpc ||
       new ec2.Vpc(this, 'FargateVpc', {
@@ -88,14 +63,12 @@ export class FargateNodejsService extends Construct {
         natGateways: props.assignPublicIp ? 0 : 1,
       });
 
-    // Get or create cluster
     this.cluster =
       props.cluster ||
       new ecs.Cluster(this, 'FargateCluster', {
         vpc: this.vpc,
       });
 
-    // Create task definition
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'FargateTaskDef', {
       cpu: props.cpu || 256,
       memoryLimitMiB: props.memoryLimitMiB || 512,
@@ -107,7 +80,6 @@ export class FargateNodejsService extends Construct {
       },
     });
 
-    // Create log group
     const logGroup =
       props.logGroup ||
       new logs.LogGroup(this, 'FargateLogGroup', {
@@ -115,8 +87,6 @@ export class FargateNodejsService extends Construct {
         removalPolicy: RemovalPolicy.DESTROY,
       });
 
-    // Build Docker image with bundled code
-    // Use the bundled directory as context and a simple Dockerfile
     const image = ecs.ContainerImage.fromAsset(bundleDir, {
       platform:
         props.architecture === ecs.CpuArchitecture.ARM64
@@ -126,10 +96,8 @@ export class FargateNodejsService extends Construct {
         NODE_VERSION: runtime,
         ...props.buildArgs,
       },
-      // Dockerfile is copied to root of bundle directory
     });
 
-    // Create container definition
     this.container = this.taskDefinition.addContainer('FargateContainer', {
       image,
       logging: ecs.LogDriver.awsLogs({
@@ -150,10 +118,6 @@ export class FargateNodejsService extends Construct {
       });
     }
 
-    // Note: Health checks should be configured at the ECS service level or via ALB
-    // Container-level health checks are not directly supported in CDK
-
-    // Create security group
     const securityGroups = props.securityGroups || [
       new ec2.SecurityGroup(this, 'FargateSecurityGroup', {
         vpc: this.vpc,
@@ -191,6 +155,8 @@ export class FargateNodejsService extends Construct {
     });
 
     // Configure load balancer if specified
+    // Note: Health checks should be configured at the ECS service level or via ALB
+    // Container-level health checks are not directly supported in CDK
     if (props.loadBalancer) {
       if (containerPort === undefined) {
         throw new Error('containerPort must be specified when loadBalancer is configured');
@@ -198,21 +164,16 @@ export class FargateNodejsService extends Construct {
       this.configureLoadBalancer(props, containerPort);
     }
 
-    // Configure auto scaling if specified
     if (props.autoScaling) {
       this.configureAutoScaling(props);
     }
   }
 
-  /**
-   * Configure load balancer
-   */
   private configureLoadBalancer(props: FargateNodejsServiceProps, containerPort: number): void {
     if (!props.loadBalancer) return;
 
     const lbConfig = props.loadBalancer;
 
-    // Get or create listener
     const listener =
       lbConfig.listener ||
       lbConfig.loadBalancer.addListener('HttpListener', {
@@ -220,7 +181,6 @@ export class FargateNodejsService extends Construct {
         protocol: elbv2.ApplicationProtocol.HTTP,
       });
 
-    // Create target group
     this.targetGroup = new elbv2.ApplicationTargetGroup(this, 'FargateTargetGroup', {
       vpc: this.vpc,
       port: containerPort,
@@ -233,10 +193,8 @@ export class FargateNodejsService extends Construct {
       deregistrationDelay: lbConfig.deregistrationDelay || Duration.seconds(30),
     });
 
-    // Attach service to target group
     this.service.attachToApplicationTargetGroup(this.targetGroup);
 
-    // Add listener rule
     new elbv2.ApplicationListenerRule(this, 'FargateListenerRule', {
       listener,
       priority: lbConfig.priority ?? 1,
@@ -252,9 +210,6 @@ export class FargateNodejsService extends Construct {
     });
   }
 
-  /**
-   * Configure auto scaling
-   */
   private configureAutoScaling(props: FargateNodejsServiceProps): void {
     if (!props.autoScaling) return;
 
@@ -313,16 +268,10 @@ export class FargateNodejsService extends Construct {
     });
   }
 
-  /**
-   * Add environment variable to the container
-   */
   public addEnvironment(key: string, value: string): void {
     this.container.addEnvironment(key, value);
   }
 
-  /**
-   * Add secret to the container
-   */
   public addSecret(key: string, secret: ecs.Secret): void {
     this.container.addSecret(key, secret);
   }

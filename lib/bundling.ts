@@ -57,17 +57,11 @@ export class Bundler {
     this.externalModules = options.externalModules || [];
   }
 
-  /**
-   * Bundle the code and return the output directory
-   */
   bundle(): string {
-    // Create a temporary directory for the bundle
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fargate-nodejs-'));
 
-    // Get target from runtime
     const target = `node${this.runtime}`;
 
-    // Build with esbuild
     const outfile = path.join(tempDir, 'index.js');
     const buildOptions: esbuild.BuildOptions = {
       entryPoints: [this.entry],
@@ -84,8 +78,6 @@ export class Bundler {
 
     esbuild.buildSync(buildOptions);
 
-    // Copy the Dockerfile to the temp directory
-    // __dirname points to dist/ after compilation, so go up and into lib/
     const dockerfileSrc = path.join(__dirname, '..', 'lib', 'docker', 'Dockerfile');
     const dockerfileDest = path.join(tempDir, 'Dockerfile');
     fs.copyFileSync(dockerfileSrc, dockerfileDest);
@@ -93,9 +85,6 @@ export class Bundler {
     return tempDir;
   }
 
-  /**
-   * Find the project root by looking for package.json
-   */
   static findProjectRoot(startPath: string): string {
     let currentPath = startPath;
     while (currentPath !== path.dirname(currentPath)) {
@@ -105,7 +94,6 @@ export class Bundler {
       }
       currentPath = path.dirname(currentPath);
     }
-    // If not found, return the start path
     return startPath;
   }
 }
