@@ -8,6 +8,7 @@ dist/
 build/
 *.tsbuildinfo
 cdk.out/
+*.tgz
 
 # Logs
 logs

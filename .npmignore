@@ -10,6 +10,7 @@ examples/
 **/*.spec.ts
 **/__tests__/
 coverage/
+test/**
 
 # Configuration files
 tsconfig.json

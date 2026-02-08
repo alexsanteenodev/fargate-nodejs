@@ -1,0 +1,14 @@
+{
+  "name": "synth-test-fixture",
+  "version": "1.0.0",
+  "dependencies": {
+    "aws-cdk-lib": "^2.120.0",
+    "constructs": "^10.4.5",
+    "fargate-nodejs": "file:fargate-nodejs.tgz"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}
