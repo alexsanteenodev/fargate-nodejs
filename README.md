@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/fargate-nodejs.svg)](https://www.npmjs.com/package/fargate-nodejs)
 [![npm downloads](https://img.shields.io/npm/dm/fargate-nodejs.svg)](https://www.npmjs.com/package/fargate-nodejs)
+[![package size](https://img.shields.io/bundlephobia/minzip/fargate-nodejs)](https://bundlephobia.com/package/fargate-nodejs)
 [![CI](https://github.com/alexsanteenodev/fargate-nodejs/actions/workflows/ci.yml/badge.svg)](https://github.com/alexsanteenodev/fargate-nodejs/actions/workflows/ci.yml)
 [![GitHub](https://img.shields.io/badge/GitHub-alexsanteenodev%2Ffargate--nodejs-blue?logo=github)](https://github.com/alexsanteenodev/fargate-nodejs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
