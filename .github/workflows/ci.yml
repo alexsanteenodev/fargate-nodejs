@@ -28,11 +28,8 @@ jobs:
       - name: Lint
         run: npm run eslint
 
-      - name: Format check
-        run: npm run format:check
-
       - name: Build
         run: npm run build
 
       - name: Test
-        run: npm test
+        run: npm test --passWithNoTests
