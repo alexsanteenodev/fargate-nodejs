@@ -17,7 +17,6 @@ import { FargateNodejsServiceProps } from './types';
  * A Fargate service that runs Node.js/TypeScript code, similar to Lambda's NodejsFunction
  */
 export class FargateNodejsService extends Construct {
-
   public readonly service: ecs.FargateService;
 
   public readonly taskDefinition: ecs.FargateTaskDefinition;

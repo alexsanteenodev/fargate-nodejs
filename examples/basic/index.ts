@@ -16,7 +16,7 @@ export class BasicExampleStack extends cdk.Stack {
 
     const fn = new FargateNodejsService(this, 'MyService', {
       entry: './app/index.ts', // Path to your TypeScript/JavaScript entry file
-      runtime: '18', // Node.js 18
+      runtime: '20', // Node.js 20
       cpu: 256, // .25 vCPU
       memoryLimitMiB: 512, // 512 MB
       containerPort,
