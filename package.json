@@ -1,6 +1,6 @@
 {
   "name": "fargate-nodejs",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Fargate NodeJS lib, similar to lambda nodejs library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -54,13 +54,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.120.0",
-    "constructs": "^10.4.5",
-    "esbuild": "^0.20.0"
-  },
-  "peerDependencies": {
     "aws-cdk-lib": "^2.0.0",
-    "constructs": "^10.0.0"
+    "constructs": "^10.0.0",
+    "esbuild": "^0.27.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
