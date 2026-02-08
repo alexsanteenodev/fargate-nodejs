@@ -419,7 +419,7 @@ export interface FargateNodejsServiceProps {
    * The Node.js runtime version to use
    * @default '18'
    */
-  readonly runtime?: '14' | '16' | '18' | '20' | '22';
+  readonly runtime?: '14' | '16' | '18' | '20' | '22' | '23';
 
   /**
    * The platform architecture

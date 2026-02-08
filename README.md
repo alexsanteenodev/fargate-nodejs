@@ -112,7 +112,7 @@ service.grantPermissions([...]);
 Key properties:
 
 - `entry` (required) - Path to entry file
-- `runtime` - Node.js version (14, 16, 18, 20, 22)
+- `runtime` - Node.js version (14, 16, 18, 20, 22, 23)
 - `containerPort` - Port to expose (omit for workers)
 - `cpu` / `memoryLimitMiB` - Resource limits
 - `bundling` - esbuild options (minify, sourceMap, externalModules)

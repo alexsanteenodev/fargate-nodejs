@@ -1,6 +1,6 @@
 {
   "name": "fargate-nodejs",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "Fargate NodeJS lib, similar to lambda nodejs library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -50,7 +50,13 @@
     "commit:major": "npm version major --no-git-tag-version --force",
     "commit": "git add . && git commit -m",
     "release": "npm run build && standard-version --commit-all",
+    "release:major": "npm run build && standard-version --release-as major --commit-all",
+    "release:minor": "npm run build && standard-version --release-as minor --commit-all",
+    "release:patch": "npm run build && standard-version --release-as patch --commit-all",
     "release:publish": "git add . && npm run release && git push --follow-tags origin main && npm publish",
+    "release:publish:major": "git add . && npm run release:major && git push --follow-tags origin main && npm publish",
+    "release:publish:minor": "git add . && npm run release:minor && git push --follow-tags origin main && npm publish",
+    "release:publish:patch": "git add . && npm run release:patch && git push --follow-tags origin main && npm publish",
     "test": "jest"
   },
   "dependencies": {
