@@ -10,13 +10,17 @@ jobs:
   install:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm install
@@ -24,7 +28,7 @@ jobs:
       - name: Upload node_modules
         uses: actions/upload-artifact@v4
         with:
-          name: node_modules
+          name: node_modules-${{ matrix.node-version }}
           path: node_modules
 
   lint:
@@ -42,7 +46,7 @@ jobs:
       - name: Download node_modules
         uses: actions/download-artifact@v4
         with:
-          name: node_modules
+          name: node_modules-20.x
           path: node_modules
 
       - name: Lint
@@ -67,7 +71,7 @@ jobs:
       - name: Download node_modules
         uses: actions/download-artifact@v4
         with:
-          name: node_modules
+          name: node_modules-${{ matrix.node-version }}
           path: node_modules
 
       - name: Build
@@ -88,7 +92,7 @@ jobs:
       - name: Download node_modules
         uses: actions/download-artifact@v4
         with:
-          name: node_modules
+          name: node_modules-20.x
           path: node_modules
 
       - name: Test
