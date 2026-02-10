@@ -1,6 +1,6 @@
 {
   "name": "fargate-nodejs",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Fargate NodeJS lib, similar to lambda nodejs library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

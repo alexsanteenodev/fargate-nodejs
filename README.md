@@ -9,6 +9,12 @@
 
 Deploy Node.js/TypeScript to AWS Fargate with automatic esbuild bundling, similar to [Lambda's `NodejsFunction`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda_nodejs.NodejsFunction.html).
 
+## Video walkthrough
+
+A hands-on walkthrough showing how `fargate-nodejs` works, why it exists, and how it compares to Lambda and raw Fargate:
+
+👉 https://www.youtube.com/watch?v=LMTDykz6NuI
+
 ## Features
 
 - Automatic code bundling with esbuild (no Docker knowledge required)
